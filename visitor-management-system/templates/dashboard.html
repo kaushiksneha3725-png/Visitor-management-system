@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% set page_title = 'Dashboard' %}
+{% block title %}Dashboard — {{ app_name }}{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+  <div><h1 class="page-heading">Dashboard</h1><p class="text-secondary mb-0">A live overview of visitor activity and appointments.</p></div>
+  <a class="btn btn-primary" href="{{ url_for('visitors.add') }}"><i class="bi bi-person-plus me-1"></i> Register Visitor</a>
+</div>
+<div class="row g-3 mb-4">
+  {% set cards=[('Total Visitors',stats.total,'people','primary'),("Today's Visitors",stats.today,'calendar3','info'),('Currently Inside',stats.inside,'door-open','success'),('Checked Out Today',stats.checkout,'box-arrow-right','secondary'),('Pending Approvals',stats.pending,'hourglass-split','warning'),('Total Hosts',stats.hosts,'person-workspace','dark')] %}
+  {% for label,value,icon,tone in cards %}<div class="col-6 col-xl-2"><div class="stat-card"><div class="d-flex justify-content-between"><div><div class="stat-label">{{ label }}</div><div class="stat-value" data-stat="{{ ['total','today','inside','checkout','pending','hosts'][loop.index0] }}">{{ value }}</div></div><div class="stat-icon bg-{{ tone }}-subtle text-{{ tone }}"><i class="bi bi-{{ icon }}"></i></div></div></div></div>{% endfor %}
+</div>
+<div class="row g-3">
+  <div class="col-xl-7"><div class="panel-card"><div class="panel-header"><h2 class="panel-title">Visitors per day</h2><span class="text-secondary small">Last 7 days</span></div><div class="chart-wrap"><canvas id="dailyChart"></canvas></div></div></div>
+  <div class="col-xl-5"><div class="panel-card"><div class="panel-header"><h2 class="panel-title">Check-in / Check-out</h2></div><div class="chart-wrap"><canvas id="movementChart"></canvas></div></div></div>
+  <div class="col-md-6"><div class="panel-card"><div class="panel-header"><h2 class="panel-title">Visitors by purpose</h2></div><div class="chart-wrap chart-small"><canvas id="purposeChart"></canvas></div></div></div>
+  <div class="col-md-6"><div class="panel-card"><div class="panel-header"><h2 class="panel-title">Visitors by department</h2></div><div class="chart-wrap chart-small"><canvas id="departmentChart"></canvas></div></div></div>
+</div>
+<div class="row g-3 mt-1">
+  <div class="col-md-7"><div class="panel-card"><div class="panel-header"><h2 class="panel-title">Quick actions</h2></div><div class="quick-grid">
+    <a href="{{ url_for('visitors.add') }}" class="quick-action"><i class="bi bi-person-plus"></i><span>Register visitor</span></a>
+    <a href="{{ url_for('dashboard.live_visitors') }}" class="quick-action"><i class="bi bi-broadcast"></i><span>View live log</span></a>
+    <a href="{{ url_for('hosts.index') }}" class="quick-action"><i class="bi bi-person-workspace"></i><span>Manage hosts</span></a>
+    {% if current_user.role == 'ADMIN' %}<a href="{{ url_for('reports.index') }}" class="quick-action"><i class="bi bi-file-earmark-bar-graph"></i><span>Open reports</span></a>{% endif %}
+  </div></div></div>
+  <div class="col-md-5"><div class="panel-card"><div class="panel-header"><h2 class="panel-title">Visitor workflow</h2></div><div class="workflow"><div><span class="workflow-num">1</span><div><b>Register</b><small>Capture visitor and appointment details.</small></div></div><div><span class="workflow-num">2</span><div><b>Approve</b><small>Reception/Admin confirms the visit.</small></div></div><div><span class="workflow-num">3</span><div><b>Check in</b><small>Security records the arrival.</small></div></div><div><span class="workflow-num">4</span><div><b>Check out</b><small>Security records the departure.</small></div></div></div></div></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+const daily = {{ daily|tojson }}; const purposes = {{ purposes|tojson }}; const departments = {{ departments|tojson }}; const movement = {{ movement|tojson }};
+function chart(id,type,labels,data){ new Chart(document.getElementById(id),{type,data:{labels,datasets:[{label:'Visitors',data,borderWidth:2,tension:.3,fill:type==='line'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:type!=='doughnut'}}}}); }
+chart('dailyChart','line',daily.map(x=>x.label),daily.map(x=>x.count));
+chart('purposeChart','bar',purposes.map(x=>x.label),purposes.map(x=>x.count));
+chart('departmentChart','bar',departments.map(x=>x.label),departments.map(x=>x.count));
+new Chart(document.getElementById('movementChart'),{type:'doughnut',data:{labels:['Checked In / Active','Checked Out'],datasets:[{data:[movement.checked_in,movement.checked_out]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+</script>
+{% endblock %}

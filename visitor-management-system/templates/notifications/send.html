@@ -1,0 +1,9 @@
+{% extends 'base.html' %}{% set page_title='Send Notification' %}{% block title %}Send Notification — {{ app_name }}{% endblock %}
+{% block content %}
+<div class="mb-4"><h1 class="page-heading">Send Notification</h1><p class="text-secondary mb-0">Send an in-app message to a staff member or host email address.</p></div>
+<div class="panel-card"><form method="post">{{ form.hidden_tag() }}
+  <div class="mb-3">{{ form.recipient.label(class='form-label fw-semibold') }}{{ form.recipient(class='form-control',placeholder='host@example.com') }}{% for e in form.recipient.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+  <div class="mb-3">{{ form.message.label(class='form-label fw-semibold') }}{{ form.message(class='form-control',rows='5',placeholder='Write the notification message...') }}{% for e in form.message.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+  <div class="d-flex justify-content-end gap-2"><a href="{{ url_for('notifications.index') }}" class="btn btn-light border">Cancel</a>{{ form.submit(class='btn btn-primary') }}</div>
+</form></div>
+{% endblock %}

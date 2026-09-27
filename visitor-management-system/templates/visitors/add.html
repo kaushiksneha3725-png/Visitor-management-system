@@ -1,0 +1,20 @@
+{% extends 'base.html' %}{% set page_title='Register Visitor' %}{% block title %}Register Visitor — {{ app_name }}{% endblock %}
+{% block content %}
+<div class="mb-4"><h1 class="page-heading">Register Visitor</h1><p class="text-secondary mb-0">Capture visitor identity, host, purpose, and appointment details.</p></div>
+<div class="panel-card"><form method="post" enctype="multipart/form-data" novalidate>{{ form.hidden_tag() }}
+  <div class="section-title">Visitor information</div><div class="row g-3">
+    {% for field in [form.name,form.phone,form.email,form.company] %}<div class="col-md-6">{{ field.label(class='form-label fw-semibold') }}{{ field(class='form-control') }}{% for e in field.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>{% endfor %}
+    <div class="col-12">{{ form.address.label(class='form-label fw-semibold') }}{{ form.address(class='form-control',rows='2') }}{% for e in form.address.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+  </div>
+  <div class="section-title mt-4">Visit details</div><div class="row g-3">
+    <div class="col-md-6">{{ form.host_id.label(class='form-label fw-semibold') }}{{ form.host_id(class='form-select') }}{% for e in form.host_id.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+    <div class="col-md-6">{{ form.purpose.label(class='form-label fw-semibold') }}{{ form.purpose(class='form-control',placeholder='Reason for visit') }}{% for e in form.purpose.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+    <div class="col-md-4">{{ form.id_proof_type.label(class='form-label fw-semibold') }}{{ form.id_proof_type(class='form-select') }}{% for e in form.id_proof_type.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+    <div class="col-md-4">{{ form.id_proof_number.label(class='form-label fw-semibold') }}{{ form.id_proof_number(class='form-control') }}{% for e in form.id_proof_number.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+    <div class="col-md-2">{{ form.appointment_date.label(class='form-label fw-semibold') }}{{ form.appointment_date(class='form-control',min=today.isoformat()) }}{% for e in form.appointment_date.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+    <div class="col-md-2">{{ form.appointment_time.label(class='form-label fw-semibold') }}{{ form.appointment_time(class='form-control') }}{% for e in form.appointment_time.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+    <div class="col-md-6">{{ form.photo.label(class='form-label fw-semibold') }}{{ form.photo(class='form-control',accept='.jpg,.jpeg,.png') }}<div class="form-text">JPG/JPEG/PNG only, maximum 2 MB.</div>{% for e in form.photo.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+  </div>
+  <div class="d-flex justify-content-end gap-2 mt-4"><a href="{{ url_for('visitors.index') }}" class="btn btn-light border">Cancel</a>{{ form.submit(class='btn btn-primary') }}</div>
+</form></div>
+{% endblock %}

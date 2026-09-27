@@ -1,0 +1,12 @@
+{% extends 'base.html' %}{% set page_title='Edit Visitor' %}{% block title %}Edit Visitor — {{ app_name }}{% endblock %}
+{% block content %}
+<div class="mb-4"><h1 class="page-heading">Edit Visitor</h1><p class="text-secondary mb-0">Update {{ visitor.visitor_id }} without losing the visit history.</p></div>
+<div class="panel-card"><form method="post" enctype="multipart/form-data" novalidate>{{ form.hidden_tag() }}
+  <div class="row g-3">{% for field in [form.name,form.phone,form.email,form.company] %}<div class="col-md-6">{{ field.label(class='form-label fw-semibold') }}{{ field(class='form-control') }}{% for e in field.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>{% endfor %}
+  <div class="col-12">{{ form.address.label(class='form-label fw-semibold') }}{{ form.address(class='form-control',rows='2') }}</div>
+  <div class="col-md-6">{{ form.host_id.label(class='form-label fw-semibold') }}{{ form.host_id(class='form-select') }}</div><div class="col-md-6">{{ form.purpose.label(class='form-label fw-semibold') }}{{ form.purpose(class='form-control') }}</div>
+  <div class="col-md-4">{{ form.id_proof_type.label(class='form-label fw-semibold') }}{{ form.id_proof_type(class='form-select') }}</div><div class="col-md-4">{{ form.id_proof_number.label(class='form-label fw-semibold') }}{{ form.id_proof_number(class='form-control') }}</div><div class="col-md-2">{{ form.appointment_date.label(class='form-label fw-semibold') }}{{ form.appointment_date(class='form-control') }}</div><div class="col-md-2">{{ form.appointment_time.label(class='form-label fw-semibold') }}{{ form.appointment_time(class='form-control') }}</div>
+  <div class="col-md-6">{{ form.photo.label(class='form-label fw-semibold') }}{{ form.photo(class='form-control',accept='.jpg,.jpeg,.png') }}<div class="form-text">Leave blank to keep the current photo.</div></div>
+  </div><div class="d-flex justify-content-end gap-2 mt-4"><a href="{{ url_for('visitors.details', visitor_id=visitor.id) }}" class="btn btn-light border">Cancel</a>{{ form.submit(class='btn btn-primary',value='Save Changes') }}</div>
+</form></div>
+{% endblock %}

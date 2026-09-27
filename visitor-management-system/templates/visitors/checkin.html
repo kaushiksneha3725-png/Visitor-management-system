@@ -1,0 +1,2 @@
+{% extends 'base.html' %}{% set page_title='Check In Visitor' %}{% block title %}Check In — {{ app_name }}{% endblock %}
+{% block content %}<div class="empty-state"><div class="empty-icon"><i class="bi bi-box-arrow-in-right"></i></div><h1>Check-in confirmation</h1><p class="text-secondary">Use the visitor details page to verify approval and blacklist status before checking in.</p><a href="{{ url_for('visitors.details', visitor_id=visitor.id) if visitor else url_for('visitors.index') }}" class="btn btn-primary">Open Visitor</a></div>{% endblock %}
